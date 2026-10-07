@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Strawberry Cake",
+    "category": "Dessert",
+    "price": 89,
+    "shortDescription": "Soft vanilla cake with fresh strawberry cream.",
+    "description": "A soft vanilla sponge layered with gentle strawberry cream and fresh strawberries. Sweet, creamy and light.",
+    "taste": "Sweet, creamy and softly fruity.",
+    "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    "id": 2,
+    "name": "Matcha Latte",
+    "category": "Drink",
+    "price": 70,
+    "shortDescription": "Smooth matcha with creamy milk.",
+    "description": "A gentle Japanese-style matcha latte with a creamy milk base and a soft earthy finish.",
+    "taste": "Creamy, earthy and lightly sweet.",
+    "image": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    "id": 3,
+    "name": "Croissant",
+    "category": "Bakery",
+    "price": 59,
+    "shortDescription": "Buttery, flaky and freshly baked.",
+    "description": "A golden buttery croissant with crisp layers outside and a soft, airy center.",
+    "taste": "Buttery, flaky and lightly salty.",
+    "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    "id": 4,
+    "name": "Iced Latte",
+    "category": "Drink",
+    "price": 75,
+    "shortDescription": "Classic espresso, milk and ice.",
+    "description": "A simple iced latte made with espresso, creamy milk and plenty of ice for a refreshing coffee break.",
+    "taste": "Smooth, milky and gently bitter.",
+    "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    "id": 5,
+    "name": "Brownie",
+    "category": "Dessert",
+    "price": 59,
+    "shortDescription": "Rich chocolate brownie with a fudgy center.",
+    "description": "A small homemade-style chocolate brownie with a deep cocoa flavor and a soft fudgy center.",
+    "taste": "Rich, chocolatey and fudgy.",
+    "image": "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    "id": 6,
+    "name": "Honey Toast",
+    "category": "Bakery",
+    "price": 85,
+    "shortDescription": "Warm toast with honey and vanilla cream.",
+    "description": "Crispy golden toast served warm with honey, vanilla cream and a little sweetness.",
+    "taste": "Warm, buttery and sweet.",
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=900&q=85"
+  }
+]
