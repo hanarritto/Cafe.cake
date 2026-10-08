@@ -3,34 +3,78 @@
 // JavaScript + Vue 3
 // =========================================================
 
+
+// =========================================================
+// CREATE VUE APPLICATION
+// =========================================================
+
 const { createApp } = Vue;
 
 createApp({
+
+  // =======================================================
+  // DATA
+  // เก็บข้อมูลและสถานะต่าง ๆ ของเว็บไซต์
+  // =======================================================
+
   data() {
     return {
+
       // -------------------- Menu --------------------
+
+      // รายการเมนูทั้งหมด
       menu: [],
+
+      // สถานะการโหลดเมนู
       loading: true,
+
+      // Category ที่เลือก
       selectedCategory: "All",
 
+
       // -------------------- UI --------------------
+
+      // เปิด / ปิด Mobile Menu
       mobileMenuOpen: false,
-      darkMode: localStorage.getItem("littleLeafDarkMode") === "true",
+
+      // Dark Mode
+      darkMode:
+        localStorage.getItem("littleLeafDarkMode") === "true",
+
+      // แสดง / ซ่อนปุ่ม Go Top
       showGoTop: false,
 
+
       // -------------------- Menu Detail --------------------
+
+      // เมนูที่กำลังดูรายละเอียด
       selectedItem: null,
+
+      // จำนวนสินค้าที่เลือก
       detailQuantity: 1,
 
+
       // -------------------- Cart --------------------
+
+      // รายการสินค้าในตะกร้า
       cart: [],
+
+      // เปิด / ปิด Checkout
       checkoutOpen: false,
 
+
       // -------------------- Order --------------------
+
+      // Order ปัจจุบัน
       currentOrder: null,
+
+      // เปิด / ปิด Receipt
       receiptOpen: false,
 
-      // -------------------- Forms --------------------
+
+      // -------------------- Order Form --------------------
+
+      // ข้อมูลสำหรับสั่งซื้อ
       orderForm: {
         name: "",
         email: "",
@@ -38,25 +82,46 @@ createApp({
         note: ""
       },
 
+
+      // -------------------- Contact Form --------------------
+
+      // ข้อมูลจาก Contact Form
       contactForm: {
         name: "",
         email: "",
         message: ""
       },
 
+
       // -------------------- Toast --------------------
+
+      // ข้อความแจ้งเตือน
       toastMessage: ""
     };
   },
 
+
+  // =======================================================
+  // COMPUTED
+  // คำนวณข้อมูลจาก Data และอัปเดตอัตโนมัติ
+  // =======================================================
+
   computed: {
-    // สร้างรายการหมวดหมู่จากข้อมูลเมนู
+
+    // สร้างรายการ Category จาก Menu
     categories() {
-      return ["All", ...new Set(this.menu.map(item => item.category))];
+      return [
+        "All",
+        ...new Set(
+          this.menu.map(item => item.category)
+        )
+      ];
     },
 
-    // filter() ใช้กรองเมนูตามหมวดหมู่
+
+    // กรอง Menu ตาม Category ที่เลือก
     filteredMenu() {
+
       if (this.selectedCategory === "All") {
         return this.menu;
       }
@@ -66,55 +131,93 @@ createApp({
       );
     },
 
-    // คำนวณราคารวมจากสินค้าในตะกร้า
+
+    // คำนวณราคารวมของสินค้าใน Cart
     cartTotal() {
       return this.cart.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) =>
+          total + item.price * item.quantity,
         0
       );
     }
   },
 
+
+  // =======================================================
+  // LIFECYCLE
+  // ทำงานเมื่อ Vue โหลดและเชื่อมต่อกับ HTML
+  // =======================================================
+
   async mounted() {
-    // ใช้ async/await + Fetch API ตามเนื้อหาวิชา
+
+    // โหลด Menu จาก menu.json
     await this.loadMenu();
 
-    // โหลดออเดอร์จาก localStorage
+    // โหลด Order จาก Local Storage
     this.loadCurrentOrder();
 
-    // ใช้สถานะ Dark Mode ที่เคยบันทึกไว้
-    document.body.classList.toggle("dark-mode", this.darkMode);
+    // โหลดสถานะ Dark Mode
+    document.body.classList.toggle(
+      "dark-mode",
+      this.darkMode
+    );
 
-    // ตรวจจับการ Scroll เพื่อแสดงปุ่ม Go Top
-    window.addEventListener("scroll", this.handleScroll);
+    // ตรวจจับการ Scroll
+    window.addEventListener(
+      "scroll",
+      this.handleScroll
+    );
   },
 
+
+  // ลบ Event Listener ก่อน Vue ถูกถอดออก
   beforeUnmount() {
-    window.removeEventListener("scroll", this.handleScroll);
+
+    window.removeEventListener(
+      "scroll",
+      this.handleScroll
+    );
   },
+
+
+  // =======================================================
+  // METHODS
+  // รวม Function ทั้งหมดของเว็บไซต์
+  // =======================================================
 
   methods: {
 
+
     // =====================================================
     // FETCH + JSON
+    // โหลดข้อมูล Menu จาก menu.json
     // =====================================================
 
     async loadMenu() {
       try {
-        const response = await fetch("menu.json");
+
+        const response =
+          await fetch("menu.json");
 
         if (!response.ok) {
-          throw new Error("ไม่สามารถโหลด menu.json ได้");
+          throw new Error(
+            "ไม่สามารถโหลด menu.json ได้"
+          );
         }
 
-        // แปลง JSON เป็น JavaScript Object
+        // แปลง JSON → JavaScript Object
         this.menu = await response.json();
 
       } catch (error) {
+
         console.error(error);
-        this.showToast("โหลดเมนูไม่สำเร็จ");
+
+        this.showToast(
+          "โหลดเมนูไม่สำเร็จ"
+        );
 
       } finally {
+
         this.loading = false;
       }
     },
@@ -122,17 +225,20 @@ createApp({
 
     // =====================================================
     // DARK MODE
+    // เปิด / ปิด Dark Mode
     // =====================================================
 
     toggleDarkMode() {
-      this.darkMode = !this.darkMode;
+
+      this.darkMode =
+        !this.darkMode;
 
       document.body.classList.toggle(
         "dark-mode",
         this.darkMode
       );
 
-      // เก็บค่าไว้ใน localStorage
+      // บันทึกสถานะ Dark Mode
       localStorage.setItem(
         "littleLeafDarkMode",
         this.darkMode
@@ -144,29 +250,41 @@ createApp({
 
     // =====================================================
     // MOBILE MENU
+    // จัดการ Mobile Navigation
     // =====================================================
 
     closeMobileMenu() {
+
       this.mobileMenuOpen = false;
     },
 
 
     // =====================================================
     // MENU DETAIL
+    // เปิด / ปิดรายละเอียดสินค้า
     // =====================================================
 
     openMenuDetail(item) {
+
       this.selectedItem = item;
+
       this.detailQuantity = 1;
+
       this.playClick();
     },
 
+
     closeMenuDetail() {
+
       this.selectedItem = null;
+
       this.detailQuantity = 1;
     },
 
+
+    // เพิ่ม / ลดจำนวนสินค้าใน Menu Detail
     changeDetailQuantity(amount) {
+
       this.detailQuantity += amount;
 
       if (this.detailQuantity < 1) {
@@ -179,16 +297,24 @@ createApp({
 
     // =====================================================
     // CART
+    // จัดการสินค้าในตะกร้า
     // =====================================================
 
     addToOrder(item, quantity) {
+
+      // ตรวจสอบว่าสินค้ามีอยู่ใน Cart แล้วหรือไม่
       const existing = this.cart.find(
         cartItem => cartItem.id === item.id
       );
 
       if (existing) {
+
+        // ถ้ามีอยู่แล้ว → เพิ่มจำนวน
         existing.quantity += quantity;
+
       } else {
+
+        // ถ้ายังไม่มี → เพิ่มสินค้าใหม่
         this.cart.push({
           id: item.id,
           name: item.name,
@@ -205,12 +331,14 @@ createApp({
 
       this.closeMenuDetail();
 
-      // ถ้ามีออเดอร์อยู่แล้ว = ให้เพิ่มต่อในออเดอร์เดิม
-      // ถ้ายังไม่มี = เปิด Checkout เพื่อสร้างออเดอร์แรก
+      // เปิด Checkout
       this.checkoutOpen = true;
     },
 
+
+    // เพิ่ม / ลดจำนวนสินค้าใน Cart
     changeCartQuantity(id, amount) {
+
       const item = this.cart.find(
         cartItem => cartItem.id === id
       );
@@ -219,7 +347,9 @@ createApp({
 
       item.quantity += amount;
 
+      // ถ้าจำนวนเหลือ 0 → ลบออกจาก Cart
       if (item.quantity <= 0) {
+
         this.cart = this.cart.filter(
           cartItem => cartItem.id !== id
         );
@@ -230,45 +360,77 @@ createApp({
 
 
     // =====================================================
-    // ORDER / LOCAL STORAGE
+    // ORDER + LOCAL STORAGE
+    // จัดการ Order และบันทึกข้อมูลใน Browser
     // =====================================================
 
     loadCurrentOrder() {
-      const saved = localStorage.getItem("littleLeafCurrentOrder");
+
+      // โหลด Order จาก Local Storage
+      const saved =
+        localStorage.getItem(
+          "littleLeafCurrentOrder"
+        );
 
       if (!saved) {
         return;
       }
 
       try {
+
+        // JSON String → JavaScript Object
         const order = JSON.parse(saved);
 
         // แสดงเฉพาะ Order ของวันนี้
         if (this.isToday(order.createdAt)) {
+
           this.currentOrder = order;
+
         } else {
-          // ถ้าเป็นวันเก่า ให้ลบออก
-          localStorage.removeItem("littleLeafCurrentOrder");
+
+          // ลบ Order ของวันเก่า
+          localStorage.removeItem(
+            "littleLeafCurrentOrder"
+          );
         }
 
       } catch (error) {
-        console.error("อ่าน Order ไม่สำเร็จ", error);
-        localStorage.removeItem("littleLeafCurrentOrder");
+
+        console.error(
+          "อ่าน Order ไม่สำเร็จ",
+          error
+        );
+
+        localStorage.removeItem(
+          "littleLeafCurrentOrder"
+        );
       }
     },
 
+
+    // =====================================================
+    // SUBMIT ORDER
+    // สร้าง Order ใหม่ หรือเพิ่มสินค้าเข้า Order เดิม
+    // =====================================================
+
     submitOrder() {
+
+      // ตรวจสอบว่า Cart มีสินค้าหรือไม่
       if (this.cart.length === 0) {
-        this.showToast("Please add something first 🍰");
+
+        this.showToast(
+          "Please add something first 🍰"
+        );
+
         return;
       }
 
       const now = new Date();
 
-      // -----------------------------------------------
-      // ถ้ายังไม่มี Order = สร้าง Order ใหม่
-      // ถ้ามี Order อยู่แล้ว = เพิ่มสินค้าเข้า Order เดิม
-      // -----------------------------------------------
+
+      // ---------------------------------------------------
+      // สร้าง Order ใหม่
+      // ---------------------------------------------------
 
       if (!this.currentOrder) {
 
@@ -277,8 +439,11 @@ createApp({
           Date.now().toString().slice(-6);
 
         this.currentOrder = {
+
           id: orderId,
-          createdAt: now.toISOString(),
+
+          createdAt:
+            now.toISOString(),
 
           customer: {
             name: this.orderForm.name,
@@ -295,19 +460,29 @@ createApp({
           total: this.cartTotal
         };
 
+
+      // ---------------------------------------------------
+      // เพิ่มสินค้าเข้า Order เดิม
+      // ---------------------------------------------------
+
       } else {
 
-        // เพิ่มรายการใหม่เข้าใบเสร็จเดิม
         this.cart.forEach(cartItem => {
 
-          const existing = this.currentOrder.items.find(
-            item => item.id === cartItem.id
-          );
+          const existing =
+            this.currentOrder.items.find(
+              item => item.id === cartItem.id
+            );
 
           if (existing) {
-            existing.quantity += cartItem.quantity;
+
+            // ถ้ามีสินค้าเดิม → เพิ่มจำนวน
+            existing.quantity +=
+              cartItem.quantity;
 
           } else {
+
+            // ถ้าเป็นสินค้าใหม่ → เพิ่มเข้า Order
             this.currentOrder.items.push({
               ...cartItem,
               addedLater: true
@@ -315,7 +490,8 @@ createApp({
           }
         });
 
-        // อัปเดตยอดรวมใหม่
+
+        // คำนวณยอดรวมใหม่
         this.currentOrder.total =
           this.currentOrder.items.reduce(
             (total, item) =>
@@ -323,7 +499,8 @@ createApp({
             0
           );
 
-        // อัปเดตข้อมูลลูกค้า ถ้ามีการกรอกใหม่
+
+        // อัปเดตข้อมูลลูกค้า
         this.currentOrder.customer = {
           name: this.orderForm.name,
           email: this.orderForm.email,
@@ -332,60 +509,97 @@ createApp({
         };
       }
 
-      // บันทึก Order ลง localStorage
+
+      // ---------------------------------------------------
+      // บันทึก Order ลง Local Storage
+      // ---------------------------------------------------
+
       localStorage.setItem(
         "littleLeafCurrentOrder",
         JSON.stringify(this.currentOrder)
       );
 
-      // เคลียร์ตะกร้าชั่วคราว
+
+      // ---------------------------------------------------
+      // Reset หลัง Submit
+      // ---------------------------------------------------
+
       this.cart = [];
 
-      // ปิด Checkout
       this.checkoutOpen = false;
 
-      // รีเซ็ตฟอร์ม
       this.resetOrderForm();
 
-      // แจ้งผู้ใช้
+
+      // ---------------------------------------------------
+      // แสดงข้อความสำเร็จ
+      // ---------------------------------------------------
+
       this.showToast(
-        this.currentOrder.items.some(item => item.addedLater)
+        this.currentOrder.items.some(
+          item => item.addedLater
+        )
           ? "Added to your existing order ✦"
           : "Your order has been submitted ♡"
       );
 
-      // เปิดใบเสร็จทันที
+
+      // เปิด Receipt หลังจาก 350ms
       setTimeout(() => {
+
         this.openReceipt();
+
       }, 350);
     },
 
 
+    // Reset Order Form
     resetOrderForm() {
+
       this.orderForm = {
-        name: this.currentOrder?.customer?.name || "",
-        email: this.currentOrder?.customer?.email || "",
-        phone: this.currentOrder?.customer?.phone || "",
-        note: this.currentOrder?.customer?.note || ""
+        name:
+          this.currentOrder?.customer?.name || "",
+
+        email:
+          this.currentOrder?.customer?.email || "",
+
+        phone:
+          this.currentOrder?.customer?.phone || "",
+
+        note:
+          this.currentOrder?.customer?.note || ""
       };
     },
 
 
+    // =====================================================
+    // RECEIPT
+    // เปิดใบเสร็จ
+    // =====================================================
+
     openReceipt() {
+
       if (!this.currentOrder) return;
 
       this.receiptOpen = true;
+
       this.playClick();
     },
 
 
     // =====================================================
-    // DATE / TIME
+    // DATE + TIME
+    // จัดการวันที่และเวลา
     // =====================================================
 
+    // ตรวจสอบว่า Order เป็นของวันนี้หรือไม่
     isToday(dateString) {
-      const date = new Date(dateString);
-      const today = new Date();
+
+      const date =
+        new Date(dateString);
+
+      const today =
+        new Date();
 
       return (
         date.getFullYear() === today.getFullYear() &&
@@ -394,31 +608,57 @@ createApp({
       );
     },
 
+
+    // Format วันที่
     formatDate(dateString) {
-      return new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-      }).format(new Date(dateString));
+
+      return new Intl.DateTimeFormat(
+        "en-GB",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }
+      ).format(
+        new Date(dateString)
+      );
     },
 
+
+    // Format เวลา
     formatTime(dateString) {
-      return new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit"
-      }).format(new Date(dateString));
+
+      return new Intl.DateTimeFormat(
+        "en-GB",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      ).format(
+        new Date(dateString)
+      );
     },
 
 
     // =====================================================
-    // GO TO TOP
+    // SCROLL
+    // จัดการการ Scroll ของเว็บไซต์
     // =====================================================
 
+    // ตรวจจับตำแหน่ง Scroll
     handleScroll() {
-      this.showGoTop = window.scrollY > 500;
+
+      // ถ้า Scroll มากกว่า 500px
+      // ให้แสดงปุ่ม Go Top
+
+      this.showGoTop =
+        window.scrollY > 500;
     },
 
+
+    // เลื่อนกลับไปด้านบน
     goTop() {
+
       window.scrollTo({
         top: 0,
         behavior: "smooth"
@@ -427,7 +667,10 @@ createApp({
       this.playClick();
     },
 
+
+    // เลื่อนไปยัง Menu Section
     scrollToMenu() {
+
       document
         .getElementById("menu")
         ?.scrollIntoView({
@@ -438,10 +681,14 @@ createApp({
 
     // =====================================================
     // CONTACT FORM
+    // จัดการ Contact Form
     // =====================================================
 
     submitContact() {
-      // Prototype: ยังไม่มี Backend จริง
+
+      // Prototype:
+      // ยังไม่มี Backend จริง
+
       this.showToast(
         "Thank you! Your message was received ♡"
       );
@@ -455,64 +702,130 @@ createApp({
 
 
     // =====================================================
-    // TOAST
+    // TOAST NOTIFICATION
+    // แสดงข้อความแจ้งเตือนชั่วคราว
     // =====================================================
 
     showToast(message) {
+
       this.toastMessage = message;
 
+      // ยกเลิก Timer เดิม
       clearTimeout(this.toastTimer);
 
+
+      // ซ่อน Toast หลังจาก 2.5 วินาที
       this.toastTimer = setTimeout(() => {
+
         this.toastMessage = "";
+
       }, 2500);
     },
 
 
     // =====================================================
-    // CLICK SOUND
-    // ใช้ Web Audio API เพื่อไม่ต้องมีไฟล์เสียงเพิ่ม
+    // WEB AUDIO API
+    // สร้างเสียง Click โดยไม่ใช้ไฟล์เสียง
     // =====================================================
 
     playClick() {
+
       try {
+
+        // รองรับ Browser ที่ใช้ AudioContext
+        // และ Browser ที่ใช้ webkitAudioContext
+
         const AudioContext =
           window.AudioContext ||
           window.webkitAudioContext;
 
+
         if (!AudioContext) return;
 
-        const audio = new AudioContext();
-        const oscillator = audio.createOscillator();
-        const gain = audio.createGain();
+
+        // สร้างระบบเสียง
+
+        const audio =
+          new AudioContext();
+
+
+        // สร้างตัวสร้างคลื่นเสียง
+
+        const oscillator =
+          audio.createOscillator();
+
+
+        // สร้างตัวควบคุม Volume
+
+        const gain =
+          audio.createGain();
+
+
+        // กำหนดรูปแบบคลื่นเสียง
 
         oscillator.type = "sine";
+
+
+        // กำหนดความถี่เสียง
+
         oscillator.frequency.value = 520;
+
+
+        // กำหนด Volume เริ่มต้น
 
         gain.gain.setValueAtTime(
           0.0001,
           audio.currentTime
         );
 
+
+        // เพิ่ม Volume อย่างรวดเร็ว
+
         gain.gain.exponentialRampToValueAtTime(
           0.04,
           audio.currentTime + 0.01
         );
+
+
+        // ลด Volume ลง
 
         gain.gain.exponentialRampToValueAtTime(
           0.0001,
           audio.currentTime + 0.08
         );
 
+
+        // เชื่อมเสียงเข้าด้วยกัน
+
         oscillator.connect(gain);
+
         gain.connect(audio.destination);
 
+
+        // เริ่มเสียง
+
         oscillator.start();
-        oscillator.stop(audio.currentTime + 0.08);
+
+
+        // หยุดเสียง
+
+        oscillator.stop(
+          audio.currentTime + 0.08
+        );
+
 
       } catch (error) {
-        // ถ้า Browser ไม่รองรับเสียง ไม่ต้องทำอะไร
+
+        // ถ้า Browser ไม่รองรับเสียง
+        // ไม่ต้องทำอะไร
+
       }
     }
   }
+
 }).mount("#app");
+
+
+// =========================================================
+// END OF LITTLE LEAF CAFÉ JAVASCRIPT
+// =========================================================
